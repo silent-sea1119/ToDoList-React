@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Hello React</title>
+    <script src="react-0.14.7/build/react.min.js"></script>
+    <script src="react-0.14.7/build/react-dom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.5/marked.min.js"></script>
+    <style type="text/css">
+    * {
+        padding: 0;
+        margin: 0;
+    }
+    
+    html {
+        font: 14px normal Arial, sans-serif;
+        color: #626771;
+        background-color: #fff;
+    }
+    
+    body {
+        padding: 60px;
+        text-align: center;
+    }
+    
+    input[type=text] {
+        text-align: center;
+        font: inherit;
+        border: 6px solid #a3d8d6;
+        padding: 13px 12px;
+        font-size: 15px;
+        box-shadow: 0 1px 1px #DDD;
+        width: 384px;
+        outline: none;
+        display: block;
+        color: #7B8585;
+        margin: 0 auto 20px;
+    }
+    
+    ul {
+        list-style: none;
+        display: inline-block;
+        width: 420px;
+        text-align: left;
+    }
+    
+    ul li {
+        display: block;
+        padding: 15px 20px;
+        background-color: #F8F8F8;
+        color: #7B8585;
+        margin-bottom: 3px;
+        position: relative;
+        transition: 0.3s;
+    }
+    
+    ul li a {
+        position: absolute;
+        left: 160px;
+        font-size: 12px;
+        line-height: 16px;
+        color: #969d9d;
+    }
+    
+    ul li:hover {
+        background-color: #d8f2f1;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="example">
+        can you see me
+    </div>
+    <div id="container">
+    </div>
+    <script type="text/babel">
+
+        var SearchPanel = React.createClass({
+                getInitialState:function(){
+                    return { keyword:"" };
+                },
+                handleclick:function(word){
+                    this.setState({keyword:word});
+                    
+                },
+                render:function(){
+                    return (   
+                            <div className="SearchPanel">
+                                <SearchBox handcallback={this.handleclick} />
+                                <ItemsList keyword={this.state.keyword} item={this.props.items}/>
+                            </div>
+                        );
+                }
+            })
+
+        var SearchBox = React.createClass({
+            getInitialState:function(){
+                return {text:''};
+            },
+            handlentextChange:function(e){
+                this.setState({text:e.target.value});
+                this.props.handcallback(e.target.value);
+            },
+            render:function(){
+                return (   
+                            <input type="text" value={this.state.text} placeholder="Type here" onChange={this.handlentextChange}></input>
+                        );
+            }
+        })
+        var ItemsList = React.createClass({
+            render:function(){
+                var that = this;
+                var filtered = this.props.item.filter(function(l){
+                    return l.name.toLowerCase().match(that.props.keyword );
+                });
+
+                var items= filtered.map(function(item){
+                    return (<li>
+                                {item.name} 
+                                <a href={item.url}>
+                                    {item.url}
+                                </a>
+                            </li>)
+                    });
+
+                return (   
+                            <ul>
+                                {items}
+                            </ul>
+                        );
+            }
+        })
+
+        var libraries = [
+            { name: 'Backbone.js', url: 'http://documentcloud.github.io/backbone/'},
+            { name: 'AngularJS', url: 'https://angularjs.org/'},
+            { name: 'jQuery', url: 'http://jquery.com/'},
+            { name: 'Prototype', url: 'http://www.prototypejs.org/'},
+            { name: 'React', url: 'http://facebook.github.io/react/'},
+            { name: 'Ember', url: 'http://emberjs.com/'},
+            { name: 'Knockout.js', url: 'http://knockoutjs.com/'},
+            { name: 'Dojo', url: 'http://dojotoolkit.org/'},
+            { name: 'Mootools', url: 'http://mootools.net/'},
+            { name: 'Underscore', url: 'http://documentcloud.github.io/underscore/'},
+            { name: 'Lodash', url: 'http://lodash.com/'},
+            { name: 'Moment', url: 'http://momentjs.com/'},
+            { name: 'Express', url: 'http://expressjs.com/'},
+            { name: 'Koa', url: 'http://koajs.com/'},
+        ];
+
+        ReactDOM.render(
+            <SearchPanel items={libraries} />,
+            document.getElementById('container')
+        );
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Hello React</title>
+    <script src="react-0.14.7/build/react.min.js"></script>
+    <script src="react-0.14.7/build/react-dom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.5/marked.min.js"></script>
+    <style type="text/css">
+    * {
+        padding: 0;
+        margin: 0;
+    }
+    
+    html {
+        font: 14px normal Arial, sans-serif;
+        color: #626771;
+        background-color: #fff;
+    }
+    
+    body {
+        padding: 60px;
+        text-align: center;
+    }
+    
+    ul {
+        list-style: none;
+        display: inline-block;
+    }
+    
+    ul li {
+        display: inline-block;
+        padding: 10px 20px;
+        cursor: pointer;
+        background-color: #eee;
+        color: #7B8585;
+        transition: 0.3s;
+    }
+    
+    ul li:hover {
+        background-color: #beecea;
+    }
+    
+    ul li.focused {
+        color: #fff;
+        background-color: #41c7c2;
+    }
+    
+    p {
+        padding-top: 15px;
+        font-size: 12px;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="example">
+        <!-- can you see me -->
+    </div>
+    <div id="container">
+        
+    </div>
+    
+    <script type="text/babel" src="navigation.js"></script>
+</body>
+
+</html>
