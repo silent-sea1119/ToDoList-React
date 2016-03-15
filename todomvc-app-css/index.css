@@ -303,6 +303,7 @@ label[for='toggle-all'] {
 .filters li a.selected,
 .filters li a:hover {
 	border-color: rgba(175, 47, 47, 0.1);
+	background-color: #f5f5f5;
 }
 
 .filters li a.selected {
