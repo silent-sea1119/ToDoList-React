@@ -10,7 +10,7 @@ var Todowork = function (name, completed){
 			}
 		}
 Todowork.prototype.toggle=function(){
-			this.isCompleted=!isCompleted;
+			this.isCompleted=!this.isCompleted;
 		}
 
 var SearchBox = React.createClass({
@@ -32,7 +32,7 @@ var SearchBox = React.createClass({
 				<header className='header'>
 					<h1>To Do List</h1>
 					<input className="new-todo" type="text" placeholder="what will I do" value={this.state.text} onChange={this.handlechange} onKeyDown={this.test}></input>
-					<input className="toggle-all" type="checkbox"></input>
+					<input className="toggle-all" type="checkbox" onClick={this.props.toggleAll}></input>
 				</header>
 			)
 	}
@@ -47,9 +47,11 @@ var OutcomeList = React.createClass({
 		var nodes = [];
 		var self=this;
 		this.props.items.forEach(function(element, index, array){
+			var isCompleted = element.isCompleted?"completed":"";
 			nodes.push(
-				<li className="">
+				<li className={isCompleted}>
 					<div className="view">
+						<input className="toggle" type="checkbox" checked={element.isCompleted} onClick={self.props.toggleItem.bind(self,index)}></input>
 						<label>{element.name}</label>
 						<button  onClick={self.deleteTodoitem.bind(self,index)} className="destroy"></button>
 					</div>
@@ -77,12 +79,12 @@ var Footer = React.createClass({
 
 var CommonContainer = React.createClass({
 	getInitialState:function(){
-		return {data:[{name:"testing",isCompleted:false}]};
+		return {data:[]};
 	},
 	addTodoitem:function(obj){
-		var item = JSON.parse(JSON.stringify(obj));
-		var data = this.state.data
-		data.push(item);
+		var item = obj;
+		var data = this.state.data;
+		data.unshift(item);
 		this.setState({data:data});
 	},
 	deleteTodoitem:function(number){
@@ -90,11 +92,23 @@ var CommonContainer = React.createClass({
 		delete data[number];
 		this.setState({data:data});
 	},
+	toggleItem:function(index){
+		var data = this.state.data;
+		data[index].toggle();
+		this.setState({data:data});
+	},
+	toggleAll:function(){
+		var data = this.state.data;
+		data.map(function(item){
+			item.toggle();
+		})
+		this.setState({data:data});
+	},
 	render:function(){
 		return (
 			<div className="todoapp">
-				<SearchBox addTodoitem={this.addTodoitem} addTodoitem={this.addTodoitem}/>
-				<OutcomeList items={this.state.data} deleteTodoitem={this.deleteTodoitem}/>
+				<SearchBox addTodoitem={this.addTodoitem} toggleAll={this.toggleAll} addTodoitem={this.addTodoitem}/>
+				<OutcomeList items={this.state.data} toggleItem={this.toggleItem} deleteTodoitem={this.deleteTodoitem}/>
 				<Footer />
 			</div>
 		)
