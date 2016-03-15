@@ -41,7 +41,9 @@ var OutcomeList = React.createClass({
 	deleteTodoitem:function(element,e){
 		this.props.deleteTodoitem(element);
 	},
-
+	toggle:function(element,e){
+		this.props.toggleItem(element);
+	},
 	render:function(){
 		var nodes = [];
 		var self=this;
@@ -50,7 +52,7 @@ var OutcomeList = React.createClass({
 			nodes.push(
 				<li className={isCompleted}>
 					<div className="view">
-						<input className="toggle" type="checkbox" checked={element.isCompleted} onClick={self.props.toggleItem.bind(self,index)}></input>
+						<input className="toggle" type="checkbox" checked={element.isCompleted} onClick={self.toggle.bind(null,element)}></input>
 						<label>{element.name}</label>
 						<button  onClick={self.deleteTodoitem.bind(self,element)} className="destroy"></button>
 					</div>
@@ -137,14 +139,12 @@ var CommonContainer = React.createClass({
 		console.log("deleted",filterdata);
 		this.setState({data:data,todocount:count,filterdata:filterdata});
 	},
-	toggleItem:function(index){
+	toggleItem:function(element){
 		var data = this.state.data;
-		data[index].toggle();
+		element.toggle();
 		var count=this.updateTodo(data);
 		var filterdata=this.updateData(data);
 		this.setState({data:data,todocount:count,filterdata:filterdata});
-
-
 	},
 	toggleAll:function(){
 		var data = this.state.data;
