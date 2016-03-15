@@ -1,6 +1,5 @@
 
 
-
 var Todowork = function (name, completed){
 			this.name=name;
 			if(completed){
@@ -72,6 +71,7 @@ var Footer = React.createClass({
 	render:function(){
 		return (
 				<footer className="footer">
+					<span className="todo-count">To be Done:{this.props.todocount}</span>
 				</footer>
 			)
 	}
@@ -79,37 +79,50 @@ var Footer = React.createClass({
 
 var CommonContainer = React.createClass({
 	getInitialState:function(){
-		return {data:[]};
+		return {data:[],todocount:0};
 	},
 	addTodoitem:function(obj){
 		var item = obj;
 		var data = this.state.data;
 		data.unshift(item);
-		this.setState({data:data});
+		var count = this.state.todocount+1;
+		this.setState({data:data,todocount:count});
 	},
 	deleteTodoitem:function(number){
 		var data = this.state.data;
 		delete data[number];
-		this.setState({data:data});
+		var count=this.updateTodo(data);
+		this.setState({data:data,todocount:count});
 	},
 	toggleItem:function(index){
 		var data = this.state.data;
 		data[index].toggle();
-		this.setState({data:data});
+		var count=this.updateTodo(data);
+		this.setState({data:data,todocount:count});
 	},
 	toggleAll:function(){
 		var data = this.state.data;
 		data.map(function(item){
 			item.toggle();
-		})
-		this.setState({data:data});
+		});
+		var count=this.updateTodo(data);
+		this.setState({data:data,todocount:count});
+	},
+	updateTodo:function(data){
+		var count = 0;
+		data.forEach(function(element){
+			if(element.isCompleted===false){
+				count++;
+			}
+		});
+		return count;
 	},
 	render:function(){
 		return (
 			<div className="todoapp">
 				<SearchBox addTodoitem={this.addTodoitem} toggleAll={this.toggleAll} addTodoitem={this.addTodoitem}/>
 				<OutcomeList items={this.state.data} toggleItem={this.toggleItem} deleteTodoitem={this.deleteTodoitem}/>
-				<Footer />
+				<Footer todocount={this.state.todocount}/>
 			</div>
 		)
 	}
