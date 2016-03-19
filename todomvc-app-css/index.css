@@ -291,6 +291,11 @@ label[for='toggle-all'] {
 	display: inline;
 }
 
+.filters li a.save{
+	padding: 2px 4px;
+	float:right;
+}
+
 .filters li a {
 	color: inherit;
 	margin: 3px;

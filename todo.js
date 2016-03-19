@@ -1,5 +1,9 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
+var $ = require('jquery');
+
+
+var global_data = [];
 
 var Todowork = function (name, completed){
 			this.name=name;
@@ -8,9 +12,6 @@ var Todowork = function (name, completed){
 			}else{
 				this.isCompleted=false;
 			}
-		}
-Todowork.prototype.toggle=function(){
-			this.isCompleted=!this.isCompleted;
 		}
 
 var SearchBox = React.createClass({
@@ -89,6 +90,9 @@ var Footer = React.createClass({
 					<span className="todo-count">To be Done:{this.props.todocount}</span>
 					<ul className='filters'>
 							{nodes}
+							<li>
+								<a className="save" onClick={this.props.upload}>Save</a>
+							</li>
 					</ul>
 				</footer>
 			)
@@ -108,19 +112,39 @@ var CommonContainer = React.createClass({
 		this.setState({filterWord:text,filterdata:filterdata});
 		
 	},
+	updateGlobal:function(data){
+		global_data = (data);
+	}
+	loadCommentsFromServer: function() {
+	    $.ajax({
+		    url: this.props.url,
+		    dataType: 'json',
+		    success: function(data) {
+		    	this.updateGlobal(data);
+		    	var filterdata=this.updateData(data);
+		        this.setState({data: data,filterdata:filterdata});
+		    }.bind(this),
+		    error: function(xhr, status, err) {
+		        console.error(this.props.url, status, err.toString());
+		    }.bind(this)
+	    });
+	},
+	componentDidMount: function() {
+    	this.loadCommentsFromServer();
+    	console.log("didmount",global_data)
+  	},
 	updateData:function(data,text=this.state.filterWord){
 		var data = data;
 		if(text==="Active"){
 			data=data.filter(function(item){
 				return !item.isCompleted;
 			});
-			console.log("Active",data);
 		}else if(text==="Completed"){
-			data=data.filter(function(item){
+				data=data.filter(function(item){
 				return item.isCompleted;
 			})
-			console.log("Completed",data);
 		}
+		global_data = this.state.data;
 		return data;
 	},
 	addTodoitem:function(obj){
@@ -133,24 +157,26 @@ var CommonContainer = React.createClass({
 	},
 	deleteTodoitem:function(element){
 		var data = this.state.data;
-		delete data[data.indexOf(element)];
+		data.splice(data.indexOf(element), 1)
 		var count=this.updateTodo(data);
-		console.log("deleted before",data);
 		var filterdata=this.updateData(data);
-		console.log("deleted",filterdata);
 		this.setState({data:data,todocount:count,filterdata:filterdata});
 	},
 	toggleItem:function(element){
 		var data = this.state.data;
-		element.toggle();
+		this.toggle(element);
 		var count=this.updateTodo(data);
 		var filterdata=this.updateData(data);
 		this.setState({data:data,todocount:count,filterdata:filterdata});
 	},
+	toggle:function(item){
+		item.isCompleted=!item.isCompleted;
+	},
 	toggleAll:function(){
+		var self = this;
 		var data = this.state.data;
 		data.map(function(item){
-			item.toggle();
+			self.toggle(item);
 		});
 		var count=this.updateTodo(data);
 		var filterdata=this.updateData(data);
@@ -166,19 +192,38 @@ var CommonContainer = React.createClass({
 		});
 		return count;
 	},
+	upload:function(){
+		console.log("ajax low",global_data);
+		$.ajax({
+		      url: this.props.url,
+		      dataType: 'json',
+		      type: 'POST',
+		      data: JSON.stringify({"newdata":global_data}),
+		      success: function(data) {
+		      		console.log("it works")
+		      }.bind(this),		      
+		      error: function(xhr, status, err) {
+		       		 console.error(this.props.url, status, err.toString());
+		      }.bind(this),
+	    });
+	},
 	render:function(){
 		return (
 			<div className="todoapp">
 				<SearchBox addTodoitem={this.addTodoitem} toggleAll={this.toggleAll} addTodoitem={this.addTodoitem}/>
 				<OutcomeList items={this.state.filterdata} toggleItem={this.toggleItem} deleteTodoitem={this.deleteTodoitem}/>
-				<Footer todocount={this.state.todocount} filterWord={this.state.filterWord} updateFilter={this.updateFilter}/>
+				<Footer todocount={this.state.todocount} upload={this.upload} filterWord={this.state.filterWord} updateFilter={this.updateFilter}/>
 			</div>
 		)
 	}
 })
 
-
 ReactDOM.render(
-	<CommonContainer />,
+	<CommonContainer url="http://localhost:3000/api/todo"/>,
 	document.getElementById('content')
 );
+
+$(document).ready(function() {
+    $(window).bind("beforeunload", function() { 
+    });
+});

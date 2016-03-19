@@ -11,7 +11,7 @@
 import json
 import os
 import time
-from flask import Flask, Response, request
+from flask import Flask, Response, request, make_response, session
 
 app = Flask(__name__, static_url_path='', static_folder='public')
 app.add_url_rule('/', 'root', lambda: app.send_static_file('index.html'))
@@ -32,5 +32,40 @@ def comments_handler():
 
     return Response(json.dumps(comments), mimetype='application/json', headers={'Cache-Control': 'no-cache', 'Access-Control-Allow-Origin': '*'})
 
+
+@app.route('/api/todo',methods=['GET','POST'])
+def todo_handler():
+    with open('todo.json','r') as file:
+        try:
+            todo = json.loads(file.read())
+        except ValueError:
+            todo = []
+    if request.method == 'POST':
+        newTodo = json.loads(request.get_data())['newdata']
+        todo=newTodo
+        with open('todo.json','w') as file:
+            file.write(json.dumps(todo))
+    return Response(json.dumps(todo), mimetype='application/json', headers={'Cache-Control': 'no-cache', 'Access-Control-Allow-Origin': '*'})
+
+@app.route('/hello/<username>')
+def hello(username):
+    session['username']=username;
+    return "works"
+
+@app.route('/test')
+def test():
+    return "testing"
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        return 'post'
+    else:
+        if 'username' in session:
+            return session['username']
+        else:
+            return "nothing"
+        
+app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 if __name__ == '__main__':
-    app.run(port=int(os.environ.get("PORT",3000)))
+    app.run(port=int(os.environ.get("PORT",3000)),debug=True) 
