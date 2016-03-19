@@ -28938,9 +28938,9 @@ var CommonContainer = React.createClass({
 			url: this.props.url,
 			dataType: 'json',
 			success: function (data) {
-				global_data = JSON.parse(JSON.stringify(data));
-				console.log('global', global_data);
+				console.log(data);
 				var filterdata = this.updateData(data);
+				global_data = data;
 				this.setState({ data: data, filterdata: filterdata });
 			}.bind(this),
 			error: function (xhr, status, err) {

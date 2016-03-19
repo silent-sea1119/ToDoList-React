@@ -112,16 +112,14 @@ var CommonContainer = React.createClass({
 		this.setState({filterWord:text,filterdata:filterdata});
 		
 	},
-	updateGlobal:function(data){
-		global_data = (data);
-	}
 	loadCommentsFromServer: function() {
 	    $.ajax({
 		    url: this.props.url,
 		    dataType: 'json',
 		    success: function(data) {
-		    	this.updateGlobal(data);
+		    	console.log(data);
 		    	var filterdata=this.updateData(data);
+		    	global_data = (data);
 		        this.setState({data: data,filterdata:filterdata});
 		    }.bind(this),
 		    error: function(xhr, status, err) {
